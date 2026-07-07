@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AJ — Ticket Operations &amp; Automation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B1B2F;
+    --ink-soft:#2A2A45;
+    --paper:#F3ECDA;
+    --paper2:#FFFBF0;
+    --red:#B23A48;
+    --gold:#C8A24B;
+    --slate:#6E7180;
+    --muted:#9A9DB0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--paper2);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    font-size:0.72rem;
+    color:var(--gold);
+  }
+  h1,h2,h3{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    letter-spacing:0.01em;
+    text-transform:uppercase;
+  }
+
+  /* ---------- HERO TICKET ---------- */
+  .hero-wrap{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:6vh 5vw;
+  }
+  .ticket{
+    width:100%;
+    max-width:900px;
+    background:var(--paper);
+    color:var(--ink);
+    display:grid;
+    grid-template-columns:1fr 2.4fr;
+    border-radius:14px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.45);
+    position:relative;
+    opacity:0;
+    transform:translateY(24px);
+    animation:riseIn 0.9s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-delay:0.15s;
+  }
+  @keyframes riseIn{ to{opacity:1; transform:translateY(0);} }
+
+  .stub{
+    padding:2.2rem 1.4rem;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    position:relative;
+    border-right:2px dashed rgba(27,27,47,0.35);
+  }
+  .stub::before, .stub::after{
+    content:"";
+    position:absolute;
+    width:26px; height:26px;
+    background:var(--ink);
+    border-radius:50%;
+    right:-13px;
+  }
+  .stub::before{ top:-13px; }
+  .stub::after{ bottom:-13px; }
+
+  .seat-field{ margin-bottom:1rem; }
+  .seat-field .label{ font-family:'Space Mono',monospace; font-size:0.62rem; letter-spacing:0.1em; color:var(--slate); text-transform:uppercase;}
+  .seat-field .value{ font-family:'Anton',sans-serif; font-size:1.15rem; letter-spacing:0.03em;}
+
+  .barcode{
+    height:46px;
+    background:repeating-linear-gradient(90deg, var(--ink) 0px, var(--ink) 2px, transparent 2px, transparent 5px, var(--ink) 5px, var(--ink) 6px, transparent 6px, transparent 10px);
+    margin-top:1rem;
+  }
+
+  .main-panel{
+    padding:2.6rem 2.4rem;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:1rem;
+  }
+  .main-panel h1{
+    font-size:clamp(2.1rem, 5vw, 3.2rem);
+    line-height:1.02;
+  }
+  .role{
+    font-size:clamp(1rem, 2.2vw, 1.25rem);
+    color:var(--red);
+    font-weight:600;
+    font-family:'Work Sans',sans-serif;
+    text-transform:none;
+  }
+  .tagline{ color:var(--ink-soft); max-width:46ch; font-size:0.98rem;}
+
+  .cta-row{ display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:0.6rem;}
+  .btn{
+    font-family:'Space Mono',monospace;
+    font-size:0.78rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    padding:0.75rem 1.3rem;
+    border-radius:4px;
+    text-decoration:none;
+    display:inline-block;
+    border:2px solid var(--ink);
+    transition:all 0.2s ease;
+  }
+  .btn.solid{ background:var(--ink); color:var(--paper);}
+  .btn.solid:hover{ background:var(--red); border-color:var(--red); color:var(--paper2);}
+  .btn.outline{ color:var(--ink); }
+  .btn.outline:hover{ background:var(--ink); color:var(--paper);}
+
+  .scroll-hint{
+    position:absolute;
+    bottom:-3.2rem;
+    left:50%;
+    transform:translateX(-50%);
+    color:var(--muted);
+    font-family:'Space Mono',monospace;
+    font-size:0.7rem;
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+  }
+
+  @media (max-width:640px){
+    .ticket{ grid-template-columns:1fr; }
+    .stub{ border-right:none; border-bottom:2px dashed rgba(27,27,47,0.35); flex-direction:row; flex-wrap:wrap; gap:1.2rem;}
+    .stub::before{ top:auto; bottom:-13px; left:20%; right:auto;}
+    .stub::after{ bottom:-13px; right:20%; left:auto;}
+    .barcode{ display:none; }
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding:6rem 6vw; max-width:1100px; margin:0 auto; }
+  .section-head{ margin-bottom:2.6rem; }
+  .section-head h2{ font-size:clamp(1.8rem,4vw,2.6rem); color:var(--paper2); }
+  .section-head .eyebrow{ display:block; margin-bottom:0.5rem; }
+
+  /* Lineup / projects */
+  .lineup-item{
+    display:grid;
+    grid-template-columns:80px 1fr;
+    gap:1.6rem;
+    padding:2rem 0;
+    border-top:1px solid rgba(243,236,218,0.15);
+    opacity:0;
+    transform:translateY(16px);
+    transition:opacity 0.6s ease, transform 0.6s ease;
+  }
+  .lineup-item.visible{ opacity:1; transform:translateY(0); }
+  .lineup-item:last-child{ border-bottom:1px solid rgba(243,236,218,0.15); }
+  .act-num{ font-family:'Anton',sans-serif; font-size:2.2rem; color:var(--gold); opacity:0.85; }
+  .lineup-body h3{ font-size:1.3rem; margin-bottom:0.4rem; color:var(--paper2); }
+  .lineup-body .stat{
+    display:inline-block;
+    font-family:'Space Mono',monospace;
+    font-size:0.72rem;
+    letter-spacing:0.06em;
+    color:var(--ink);
+    background:var(--gold);
+    padding:0.2rem 0.6rem;
+    border-radius:3px;
+    margin-bottom:0.7rem;
+    text-transform:uppercase;
+  }
+  .lineup-body p{ color:var(--muted); max-width:65ch; margin-bottom:0.6rem;}
+  .lineup-body ul{ list-style:none; padding:0; margin-top:0.6rem; }
+  .lineup-body li{ position:relative; padding-left:1.1rem; color:var(--paper2); font-size:0.95rem; margin-bottom:0.4rem;}
+  .lineup-body li::before{ content:"—"; position:absolute; left:0; color:var(--red);}
+  .skills-used{ margin-top:0.9rem; display:flex; flex-wrap:wrap; gap:0.5rem;}
+  .skill-tag{
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--gold);
+    border:1px solid rgba(200,162,75,0.5);
+    padding:0.25rem 0.55rem;
+    border-radius:3px;
+  }
+  .placeholder-item .act-num{ color:var(--slate); opacity:0.5;}
+  .placeholder-item h3{ color:var(--muted); }
+  .placeholder-item p{ font-style:italic; }
+
+  /* Backstage pass / skills */
+  .pass-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    gap:1.4rem;
+  }
+  .pass{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:10px;
+    padding:1.4rem 1.3rem;
+    position:relative;
+    border-left:6px solid var(--red);
+  }
+  .pass h4{ font-family:'Anton',sans-serif; font-size:1.05rem; margin-bottom:0.5rem; letter-spacing:0.02em;}
+  .pass p{ font-size:0.88rem; color:var(--ink-soft); }
+
+  /* Contact */
+  .contact-ticket{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:14px;
+    padding:2.6rem;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    gap:1.6rem;
+    border-top:2px dashed rgba(27,27,47,0.3);
+  }
+  .contact-ticket h3{ font-size:1.6rem; }
+  .contact-links{ display:flex; flex-direction:column; gap:0.4rem; font-family:'Space Mono',monospace; font-size:0.85rem;}
+  .contact-links a{ color:var(--ink); text-decoration:underline; }
+
+  footer{
+    text-align:center;
+    padding:3rem 5vw 4rem;
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.05em;
+    color:var(--slate);
+    text-transform:uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero-wrap">
+  <div class="ticket">
+    <div class="stub">
+      <div>
+        <div class="seat-field">
+          <div class="label">Section</div>
+          <div class="value">Ops</div>
+        </div>
+        <div class="seat-field">
+          <div class="label">Row</div>
+          <div class="value">Automation</div>
+        </div>
+        <div class="seat-field">
+          <div class="label">Admit</div>
+          <div class="value">One</div>
+        </div>
+      </div>
+      <div class="barcode"></div>
+    </div>
+    <div class="main-panel">
+      <span class="eyebrow">Portfolio — No. 001</span>
+      <h1>AJ</h1>
+      <div class="role">Ticket Operations &amp; Automation Specialist</div>
+      <p class="tagline">3+ years pulling, managing, and automating high-demand event ticket operations — from checkout scripts to the systems that keep a two-person team running like one twice the size.</p>
+      <div class="cta-row">
+        <a href="#lineup" class="btn solid">View the lineup</a>
+        <a href="#contact" class="btn outline">Get in touch</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="lineup">
+  <div class="section-head">
+    <span class="eyebrow">Main Set</span>
+    <h2>Projects</h2>
+  </div>
+
+  <div class="lineup-item">
+    <div class="act-num">01</div>
+    <div class="lineup-body">
+      <h3>Operational Strategy &amp; CRM Dashboard</h3>
+      <span class="stat">90-day roadmap · 8 strategic actions</span>
+      <p>The business had the tools, capital, and market access — but no strategic direction. I stepped up to close that gap.</p>
+      <ul>
+        <li>Wrote a full business improvement report across leadership, operations, team welfare, and financial strategy</li>
+        <li>Proposed risk-exposure limits per event and a weekly buy-vs-sell performance review</li>
+        <li>Designed a weekly reporting cadence (Monday KPI review, Wednesday inventory check, Friday summary) to build team-wide transparency</li>
+        <li>Built a 90-day roadmap the team could execute without waiting on top-down direction</li>
+      </ul>
+      <div class="skills-used">
+        <span class="skill-tag">Strategic Planning</span>
+        <span class="skill-tag">Operations</span>
+        <span class="skill-tag">Reporting Systems</span>
+        <span class="skill-tag">Initiative</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lineup-item placeholder-item">
+    <div class="act-num">02</div>
+    <div class="lineup-body">
+      <h3>Next up</h3>
+      <p>More acts coming soon — automation workflows, onboarding SOPs, and pricing trackers.</p>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="section-head">
+    <span class="eyebrow">Backstage Pass</span>
+    <h2>Core Skills</h2>
+  </div>
+  <div class="pass-grid">
+    <div class="pass">
+      <h4>Ticket Operations</h4>
+      <p>High-demand event pulling, queue management, multi-session handling, fast checkout across Ticketmaster, AXS, and more.</p>
+    </div>
+    <div class="pass">
+      <h4>Automation &amp; Tooling</h4>
+      <p>Browser automation (PrimoBrowser, antidetect profiles), Discord webhook infrastructure, AYCD API integration.</p>
+    </div>
+    <div class="pass">
+      <h4>Data &amp; Pricing Analysis</h4>
+      <p>Live secondary-market pricing trackers, inventory reconciliation, seat-level discrepancy tracking.</p>
+    </div>
+    <div class="pass">
+      <h4>Team &amp; Process</h4>
+      <p>SOP creation, onboarding documentation, weekly reporting structures, cross-platform coordination.</p>
+    </div>
+    <div class="pass">
+      <h4>Fulfillment</h4>
+      <p>Ticket transfers, listing management, and order accuracy across marketplaces — from purchase through delivery to the buyer.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="section-head">
+    <span class="eyebrow">After Show</span>
+    <h2>Let's Talk</h2>
+  </div>
+  <div class="contact-ticket">
+    <div>
+      <h3>Open to ticketing &amp; live events roles</h3>
+    </div>
+    <div class="contact-links">
+      <a href="mailto:ajv010901@gmail.com">ajv010901@gmail.com</a>
+      <a href="https://www.linkedin.com/in/anthony-jerry-valencia-a40405321" target="_blank" rel="noopener">linkedin.com/in/anthony-jerry-valencia</a>
+    </div>
+  </div>
+</section>
+
+<footer>No refunds. No exchanges. Just results.</footer>
+
+<script>
+  const items = document.querySelectorAll('.lineup-item');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('visible'); }
+    });
+  }, {threshold:0.15});
+  items.forEach(i=>io.observe(i));
+</script>
+
+</body>
+</html>
