@@ -19,8 +19,9 @@
     --muted:#9A9DB0;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; width:100%; overflow-x:hidden;}
   body{
+    width:100%;
     background:var(--ink);
     color:var(--paper2);
     font-family:'Work Sans', sans-serif;
@@ -43,11 +44,12 @@
 
   /* ---------- HERO TICKET ---------- */
   .hero-wrap{
-    min-height:100vh;
+    min-height:90vh;
     display:flex;
     align-items:center;
     justify-content:center;
     padding:6vh 5vw;
+    width:100%;
   }
   .ticket{
     width:100%;
@@ -311,13 +313,45 @@
     </div>
   </div>
 
-  <div class="lineup-item placeholder-item">
+  <div class="lineup-item">
     <div class="act-num">02</div>
     <div class="lineup-body">
-      <h3>Next up</h3>
-      <p>More acts coming soon — automation workflows, onboarding SOPs, and pricing trackers.</p>
+      <h3>Discord-Based Fulfillment Alert System</h3>
+      <span class="stat">Real-time routing · zero missed OTPs</span>
+      <p>Urgent fulfillment emails and time-sensitive OTP codes were sitting in a shared inbox nobody was watching in real time — costing minutes the team didn't have during live drops.</p>
+      <ul>
+        <li>Set up Outlook-to-Gmail forwarding with IMAP/OAuth2 so nothing depended on a single mailbox or device</li>
+        <li>Configured webhook integration to route incoming OTP and urgent fulfillment emails straight into dedicated Discord channels</li>
+        <li>Designed the channel structure and permissions so the right person saw the right alert instantly, without digging through inbox noise</li>
+      </ul>
+      <div class="skills-used">
+        <span class="skill-tag">Email Automation</span>
+        <span class="skill-tag">Webhook Integration</span>
+        <span class="skill-tag">Discord Infrastructure</span>
+      </div>
     </div>
   </div>
+
+  <div class="lineup-item">
+    <div class="act-num">03</div>
+    <div class="lineup-body">
+      <h3>Automated Email Scraper for Checkout Data</h3>
+      <span class="stat">Faster lookups · fewer missed windows</span>
+      <p>During high-demand drops, checkout confirmations and OTP codes were scattered across dozens of inboxes — every extra second spent searching was a seat lost.</p>
+      <ul>
+        <li>Built an IMAP-based email scraping pipeline with custom parser strings tuned to pull OTPs and confirmations automatically</li>
+        <li>Tuned parsing rules per platform (Ticketmaster, AXS) to handle differences in email formatting</li>
+        <li>Connected the pipeline directly into checkout tools for auto-fill, cutting manual lookup out of the process entirely</li>
+      </ul>
+      <div class="skills-used">
+        <span class="skill-tag">Email Parsing</span>
+        <span class="skill-tag">IMAP / OAuth2</span>
+        <span class="skill-tag">Checkout Tooling</span>
+      </div>
+    </div>
+  </div>
+
+
 </section>
 
 <section id="skills">
